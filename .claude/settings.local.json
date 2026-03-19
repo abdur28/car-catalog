@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npx prisma init --output app/generated/prisma/client)"
-    ]
-  }
-}
