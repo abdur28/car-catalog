@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Car Catalog — Japanese Used Cars
+
+A fullstack web application for browsing Japanese used cars scraped from [CarSensor.net](https://www.carsensor.net). Built with Next.js 16, Prisma 7, and Neon PostgreSQL.
+
+## Features
+
+- **Web Scraping** — Automated hourly scraping from CarSensor.net with Japanese → English translation
+- **JWT Authentication** — Secure login with httpOnly cookie-based sessions
+- **Advanced Filtering** — Search by brand, body type, fuel type, transmission, year range, price range
+- **Sorting & Pagination** — Sort by price, year, mileage, or date added
+- **Responsive Design** — Editorial automotive aesthetic, optimized for desktop and mobile
+- **Car Detail Pages** — Image gallery with thumbnails, full specifications, external links
+
+## Tech Stack
+
+- **Framework**: Next.js 16.2 (App Router, React 19, TypeScript)
+- **Database**: Neon PostgreSQL with Prisma 7 ORM
+- **Styling**: Tailwind CSS v4 + shadcn/ui
+- **Auth**: jose JWT + httpOnly cookies
+- **Scraper**: cheerio + node-cron (hourly schedule)
+- **Fonts**: DM Serif Display (headings) + Geist (body)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- A Neon PostgreSQL database (or any PostgreSQL instance)
+
+### Setup
 
 ```bash
+# Install dependencies
+npm install
+
+# Set environment variables
+cp .env.example .env
+# Edit .env with your DATABASE_URL and JWT_SECRET
+
+# Generate Prisma client
+npm run db:generate
+
+# Run migrations
+npm run db:migrate
+
+# Seed admin user (admin / admin123)
+npm run db:seed
+
+# Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `JWT_SECRET` | Secret key for JWT signing |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Scripts
 
-## Learn More
+| Script | Description |
+|---|---|
+| `npm run dev` | Start Next.js dev server |
+| `npm run build` | Build for production (runs migrations first) |
+| `npm run db:generate` | Regenerate Prisma client |
+| `npm run db:migrate` | Run Prisma migrations |
+| `npm run db:seed` | Seed admin user |
+| `npm run scraper` | Start scraper with hourly cron |
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Vercel (Web App)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Connect your GitHub repo to Vercel
+2. Set environment variables (`DATABASE_URL`, `JWT_SECRET`)
+3. Build command is already configured: `prisma migrate deploy && next build`
 
-## Deploy on Vercel
+### Railway (Scraper)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Deploy `npm run scraper` as a background worker on Railway with the same `DATABASE_URL`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+```
+app/
+  api/            # REST API routes (auth, cars)
+  cars/           # Car list and detail pages
+  login/          # Login page
+components/       # Reusable UI components
+lib/              # Prisma client, auth, translations
+prisma/           # Schema and migrations
+scraper/          # CarSensor.net scraper + cron
+```
+
+## Login
+
+Default credentials: `admin` / `admin123`
